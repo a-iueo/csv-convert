@@ -1,0 +1,68 @@
+<!DOCTYPE html5>
+<html>
+  <body>
+    <input type="file" multiple="true" id="file-selector" />
+    <ul id="result-list">
+    </ul>
+  </body>
+  <script>
+  	const resultList = document.getElementById('result-list');
+    const fileSelector = document.getElementById('file-selector');
+    fileSelector.addEventListener('change', selectorEvent => {
+      resultList.innerHTML = '';
+
+      const files = selectorEvent.target.files;
+      for (const file of files) {
+        const reader = new FileReader();
+        reader.addEventListener('load', readerEvent => {
+          const listItem = document.createElement('li');
+          const link = document.createElement('a');
+          const filename = processName(file.name);
+          const content = processContent(readerEvent.target.result);
+          const blob = new Blob([content], {type: 'text/plain'});
+
+          link.innerHTML = filename;
+          link.download = filename;
+          link.href = window.URL.createObjectURL(blob);
+
+          listItem.appendChild(link);
+          resultList.appendChild(listItem);
+        });
+        reader.readAsText(file);
+      }
+    });
+
+    function processName(name) {
+      return "AB" + name.substr(2);
+    }
+
+    function processContent(content) {
+      const result = [];
+      const rows = content.split(/\r?\n/);
+
+      for (const row of rows) {
+        const cells = row.split(',');
+
+        // header line automatically skipped (fails at cells[1].length != 4)
+        if (cells.length < 7 || cells[1].length != 4) {
+          continue;
+        }
+
+        const mmddyy = cells[0].split("/");
+        const date = `20${mmddyy[2]}/${mmddyy[0]}/${mmddyy[1]}`;
+        const ticker = cells[1] + ".JK";
+        const open = cells[2] + ".00";
+        const high = cells[3] + ".00";
+        const low = cells[4] + ".00";
+        const close = cells[5] + ".00";
+        const paddedVolume = cells[6].padStart(3, '0');
+        const volume = paddedVolume.slice(0, -2) + '.' + paddedVolume.slice(-2);
+
+        result.push([ticker, date, open, high, low, close, volume].join(','));
+      }
+
+      return result.join('\n');
+    }
+
+  </script>
+</html>
