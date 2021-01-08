@@ -53,7 +53,7 @@
         }
 
         const mmddyy = cells[0].split("/");
-        const date = `20${mmddyy[2]}/${mmddyy[0]}/${mmddyy[1]}`;
+        const date = `${mmddyy[2]}/${mmddyy[0]}/${mmddyy[1]}`;
         const ticker = cells[1] + ".JK";
         const open = cells[2] + ".00";
         const high = fallbackIfZero(cells[3], cells[2]) + ".00";
