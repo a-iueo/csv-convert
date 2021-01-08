@@ -35,6 +35,10 @@
     function processName(name) {
       return "AB" + name.substr(2);
     }
+    
+    function fallbackIfZero(value, fallback) {
+      return value == "0" ? fallback : value;
+    }
 
     function processContent(content) {
       const result = [];
@@ -52,11 +56,10 @@
         const date = `20${mmddyy[2]}/${mmddyy[0]}/${mmddyy[1]}`;
         const ticker = cells[1] + ".JK";
         const open = cells[2] + ".00";
-        const high = cells[3] + ".00";
-        const low = cells[4] + ".00";
-        const close = cells[5] + ".00";
-        const paddedVolume = cells[6].padStart(3, '0');
-        const volume = paddedVolume.slice(0, -2) + '.' + paddedVolume.slice(-2);
+        const high = fallbackIfZero(cells[3], cells[2]) + ".00";
+        const low = fallbackIfZero(cells[4], cells[2]) + ".00";
+        const close = fallbackIfZero(cells[5], cells[2]) + ".00";
+        const volume = cells[6] + ".00";
 
         result.push([ticker, date, open, high, low, close, volume].join(','));
       }
